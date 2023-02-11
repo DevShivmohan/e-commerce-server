@@ -9,16 +9,19 @@ import com.ecommerce.user.model.RefreshRequest;
 import com.ecommerce.user.model.VerifyRequest;
 import com.ecommerce.user.repository.UserRepository;
 import com.ecommerce.user.service.AuthenticationService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
     @Autowired
     private UserRepository userRepository;
@@ -34,10 +37,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public ResponseEntity<?> login(AuthRequest authRequest) {
-        User user=userRepository.findByUsername(authRequest.getUsername());
+        var user=userRepository.findByUsername(authRequest.getUsername()).orElseThrow(()->new GenericException("User not found",HttpStatus.NOT_FOUND.value()));
         if(user==null)
             throw new BadCredentialsException("Invalid username or password");
-        if(!user.getPassword().equals(bCryptPasswordEncoder.encode(authRequest.getPassword())))
+        if(!bCryptPasswordEncoder.matches(authRequest.getPassword(), user.getPassword()))
             throw new BadCredentialsException("Incorrect username or password");
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(),authRequest.getPassword()));
         return ResponseEntity.status(HttpStatus.OK).body(new AuthResponse(jwtUtil.generateAccessToken(user), jwtUtil.generateRefreshToken(user)));
@@ -47,7 +50,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public ResponseEntity<?> refreshToken(RefreshRequest refreshRequest) {
         if(!jwtUtil.isValidRefreshToken(refreshRequest.getRefreshToken()))
             throw new GenericException("Invalid token",HttpStatus.BAD_REQUEST.value());
-        var user= userRepository.findByUsername(jwtUtil.extractUsername(refreshRequest.getRefreshToken()));
+        var user= userRepository.findByUsername(jwtUtil.extractUsername(refreshRequest.getRefreshToken())).orElseThrow(()-> new GenericException("User not found",HttpStatus.NOT_FOUND.value()));
         return ResponseEntity.status(HttpStatus.OK).body(new AuthResponse(jwtUtil.generateAccessToken(user), jwtUtil.generateRefreshToken(user)));
     }
 

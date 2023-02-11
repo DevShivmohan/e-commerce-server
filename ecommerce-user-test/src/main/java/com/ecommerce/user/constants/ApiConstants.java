@@ -9,6 +9,7 @@ public class ApiConstants {
     public static final String LOGIN="/login";
     public static final String REFRESH="/refresh";
     public static final String VERIFY="/verify";
+    public static final String USER="/user";
     public static final String AUTHENTICATION="/authentication";
     public static final String AUTHORIZATION="Authorization";
     public static final String BEARER="Bearer ";

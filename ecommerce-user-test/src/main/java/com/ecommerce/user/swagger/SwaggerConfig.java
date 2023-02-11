@@ -26,7 +26,7 @@ public class SwaggerConfig {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2).select()
-                .apis(RequestHandlerSelectors.basePackage("com.jwt.security.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.ecommerce.user.controller"))
                 .paths(Predicates.not(PathSelectors.regex("/error")))
                 .build()
                 .apiInfo(metadata())

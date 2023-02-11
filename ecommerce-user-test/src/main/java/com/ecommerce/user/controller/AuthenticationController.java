@@ -1,6 +1,7 @@
 package com.ecommerce.user.controller;
 
 import com.ecommerce.user.constants.ApiConstants;
+import com.ecommerce.user.model.RefreshRequest;
 import com.ecommerce.user.service.AuthenticationService;
 import com.ecommerce.user.model.AuthRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -20,5 +21,11 @@ public class AuthenticationController {
     @PostMapping(ApiConstants.LOGIN)
     public ResponseEntity<?> generateToken(@RequestBody AuthRequest authRequest){
         return authenticationService.login(authRequest);
+    }
+
+    @PostMapping(ApiConstants.REFRESH)
+    public ResponseEntity<?> generateRefreshToken(@RequestBody RefreshRequest refreshRequest){
+        log.info(refreshRequest.toString());
+        return authenticationService.refreshToken(refreshRequest);
     }
 }
