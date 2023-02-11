@@ -1,0 +1,23 @@
+server:
+  port: 8050
+  servlet:
+    context-path: /ecommerce
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
+  application:
+    name: user-service
+  datasource:
+    name: user-service-datasource
+    url: jdbc:mysql://localhost:3306/ecommerce
+    username: ecommerce
+    password: ecommerce@123
+    driver:
+      class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    properties:
+      hibernate:
+        dialeact: org.hibernate.dialeact.MySQL8Dialeact
+    hibernate:
+      ddl-auto: update
