@@ -1,0 +1,16 @@
+server:
+  port: 5050
+spring:
+  application:
+    name: e-commerce-server
+  datasource:
+    name: e-commerce
+    url: jdbc:mysql://localhost:3306/ecommerce
+    username: root
+    password: root
+  jpa:
+    properties:
+      hibernate:
+        dialeact: org.hibernate.dialeact.MySQL8Dialeact
+    hibernate:
+      ddl-auto: update
